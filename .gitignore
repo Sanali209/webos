@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -17,39 +16,29 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Virtual Environment
-.venv/
+# Virtual Env
 venv/
-ENV/
+.venv/
+env/
+.env
+
+# Editor
+.vscode/
+.idea/
+
+# Docker
+docker-data/
 
 # Testing
 .pytest_cache/
-.tox/
 .coverage
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
+htmlcov/
 
-# Local Dev / Logs
-*.log
-persistence_test_output.txt
-test_nicegui.py
-debug_data.py
-sample_debug.log
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-src/core/__pycache__/di.cpython-311.pyc
+# MyPy
+.mypy_cache/
