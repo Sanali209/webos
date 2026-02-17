@@ -52,3 +52,4 @@ sample_debug.log
 # OS
 .DS_Store
 Thumbs.db
+src/core/__pycache__/di.cpython-311.pyc
