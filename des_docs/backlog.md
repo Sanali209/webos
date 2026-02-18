@@ -108,6 +108,26 @@
 - [ ] **System Shell**: Dashboard log widget
 - [ ] **UX Polish**: Unified navigation consistency audit
 
+## Phase 10: Auto-GUI SDK & Persistent Core
+- [ ] **Auto-GUI SDK (DataExplorer)**
+    - [ ] Type Mapping Engine (Pydantic -> AG Grid)
+    - [ ] Beanie CRUD Adapter
+    - [ ] Pydantic List Wrapper (In-memory)
+    - [ ] User Isolation (OwnedDocument check)
+    - [ ] Automated Tests: Mapping & DB Sync
+- [ ] **Persistent Settings Engine**
+    - [ ] `register_settings` Hook implementation
+    - [ ] `SettingsService` (Load/Save/Cache)
+    - [ ] `system_settings` Collection migration
+    - [ ] Event Bus signal on update
+    - [ ] Automated Tests: Priority & Events
+- [ ] **Admin Settings Explorer**
+    - [ ] Explorer UI in Admin module
+    - [ ] DataExplorer integration for settings list
+- [ ] **Regression Suite**
+    - [ ] Verify core boot sequence
+    - [ ] Verify existing module integrity
+
 ---
 
 ## Knowledge Log

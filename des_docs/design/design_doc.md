@@ -17,7 +17,8 @@ The **WebOS Framework** is a modular, extensible, and scalable platform designed
 *   **Shell**: **Command Palette** (HUD) for unified "Shell in Shell" navigation.
 *   **Modularity**: **Pluggy** (Plugin management).
 *   **Authentication**: FastAPI Users (Security, User management).
-*   **Visualization**: Plotly, Highcharts (via generic JS wrappers or NiceGUI integration), AG Grid (Data tables).
+*   **Visualization**: Plotly, Highcharts (via generic JS wrappers or NiceGUI integration).
+*   **Data Layout**: **AG Grid** (Primary data explorer and bulk editor).
 *   **Utilities**: Loguru (Logging), Pydantic (Validation & Settings), Cookiecutter (Scaffolding).
 
 ## 4. Core Architecture
@@ -70,9 +71,10 @@ Modules inherit from base classes provided by the Core to ensure consistency.
 *   **Theme Engine**:
     *   Centralized styling using TailwindCSS classes.
     *   The Core enforces a consistent color palette and typography.
-*   **Auto Forms SDK**:
-    *   Generates UI forms directly from Pydantic models.
-    *   Supports validation visualization (red borders, error messages).
+*   **Auto-GUI SDK**:
+    *   **AutoForm**: Generates UI forms directly from Pydantic models with validation.
+    *   **DataExplorer**: Maps Beanie/Pydantic models to editable AG Grids for bulk management.
+    *   Supports user isolation automatically for `OwnedDocument` types.
 
 *   **Shell in Shell (The HUD)**:
     *   Unified **Command Palette** (`Ctrl+K`) for instant module navigation and search.
@@ -102,7 +104,7 @@ The Admin Panel is a host module that allows other modules to plug in their own 
     *   **Dashboard**: Registry of widgets (CPU usage, active users, error rates).
     *   **User & Role Management**: RBAC configuration.
     *   **Module Manager**: List installed plugins, view status, enable/disable (if supported).
-    *   **Settings Editor**: Unified UI to edit `pydantic-settings` for the Core and all Modules.
+    *   **Settings Editor**: Unified interface powered by the **DataExplorer SDK** to edit persistent `ModuleSettingsDoc` configurations for all registered modules.
     *   **Logs Viewer**: Real-time log streaming from Loguru sinks.
 *   **Extensibility**:
     *   Modules can register **Admin Pages** (e.g., `Inventory Settings`, `Audit Logs`).
@@ -161,6 +163,10 @@ class WebOSHookSpec:
     def register_admin_ui(self, admin: AdminArea) -> None:
         """Register pages/widgets into the System Admin Panel."""
         
+    @hookspec
+    def register_settings(self) -> Type[BaseModel]:
+        """Return a Pydantic model for module persistent settings."""
+
     @hookspec
     def startup(self, ctx: AppContext) -> Coroutine:
         """Async startup logic."""

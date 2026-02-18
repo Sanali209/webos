@@ -392,3 +392,50 @@
 *   **Phase Completion & Documentation**:
     *   [x] **Final Retrospective**: "The Modular Monolith: Practical Lessons".
     *   [x] **Documentation**: Full API guide for "Built-in Shell" extensions.
+1.  
+---
+
+## Phase 10: Auto-GUI SDK & Persistent Core Refinement
+**Goal**: Elevate the Framework's developer experience by automating UI generation and providing robust module configuration.
+
+*   **Subtasks**:
+
+    *   **Auto-GUI SDK (DataExplorer)**
+        *   **Subtask**: Implement Type Mapping Engine.
+            *   *Detail*: Map `str`, `int`, `bool`, `datetime`, and `Enum` to AG Grid `columnDefs`.
+        *   **Subtask**: Implement `DataExplorer` core component.
+            *   *Detail*: Wrapper for `ui.aggrid` with support for both `Iterable[BaseModel]` (in-memory) and `Type[Document]` (Beanie).
+        *   **Subtask**: Implement Beanie Integration & User Isolation.
+            *   *Detail*: Automatic filtering for `OwnedDocument` and real-time `on_cell_change` DB updates.
+        *   **Automated Tests**:
+            *   `test_mapping_engine`: Verify correct `columnDefs` generation for various Pydantic types.
+            *   `test_beanie_crudes`: Verify grid-driven MongoDB updates and owner isolation.
+        *   **Regression Tests**:
+            *   Verify `Vault` and `File Explorer` stability during UI refactoring.
+
+    *   **Persistent Module Settings**
+        *   **Subtask**: Extend Hook System.
+            *   *Detail*: Add `register_settings` to `WebOSHookSpec`.
+        *   **Subtask**: Implement `SettingsService`.
+            *   *Detail*: Logic to fetch from `system_settings` collection, merge with defaults, and cache in memory.
+        *   **Subtask**: Real-time Sync.
+            *   *Detail*: Emit Event Bus signals on setting updates.
+        *   **Automated Tests**:
+            *   `test_settings_loading`: Verify default vs DB priority.
+            *   `test_settings_bus_emit`: Verify event notification on change.
+        *   **Regression Tests**:
+            *   Ensure `config.py` (env vars) is NOT overwritten by module settings.
+
+    *   **Admin HUD Refinement**
+        *   **Subtask**: Create Settings Explorer.
+            *   *Detail*: Registry-style UI in Admin module listing all module settings.
+        *   **Subtask**: DataExplorer Integration.
+            *   *Detail*: Use the new SDK to render the editable settings grid.
+        *   **Automated Tests**:
+            *   `test_admin_settings_rendering`: Verify all module tabs appear correctly.
+        *   **Regression Tests**:
+            *   Verify Admin Dashboard widget slots remain functional.
+
+*   **Phase Completion & Documentation**:
+    *   [ ] **Generate Documentation**: `Docs/sdk/data_explorer.md` and `Docs/core/module_settings.md`.
+    *   [ ] **Tutorial**: "Creating a Settings-Powered Module in 5 Minutes".

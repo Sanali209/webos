@@ -73,7 +73,13 @@ class ModuleLoader:
         # Get the physical path
         try:
             package = importlib.import_module(self.modules_path)
-            package_path = Path(package.__file__).parent
+            if hasattr(package, "__path__"):
+                package_path = Path(list(package.__path__)[0])
+            elif hasattr(package, "__file__"):
+                package_path = Path(package.__file__).parent
+            else:
+                logger.error(f"Module {self.modules_path} has no __path__ or __file__")
+                return
         except Exception as e:
             logger.error(f"Could not find modules path {self.modules_path}: {e}")
             return
@@ -94,8 +100,12 @@ class ModuleLoader:
             # Register explicit hooks if they exist in hooks.py within the module
             try:
                 hooks_module = importlib.import_module(f"{module_name}.hooks")
-                self.pm.register(hooks_module)
-                logger.debug(f"Registered hooks for {module_name}")
+                if hasattr(hooks_module, "hooks"):
+                    self.pm.register(hooks_module.hooks)
+                    logger.debug(f"Registered hooks instance for {module_name}")
+                else:
+                    self.pm.register(hooks_module)
+                    logger.debug(f"Registered hooks module for {module_name}")
             except ImportError:
                 # No explicit hooks, that's fine
                 pass
@@ -161,6 +171,25 @@ class ModuleLoader:
         Trigger admin widget registration hooks.
         """
         self.pm.hook.register_admin_widgets()
+
+    def register_module_settings(self):
+        """
+        Collect settings schemas from all modules.
+        """
+        from src.core.services.settings_service import settings_service
+        
+        # We iterate through plugins to know which module is registering what
+        for plugin in self.pm.get_plugins():
+            if hasattr(plugin, "register_settings"):
+                schema = plugin.register_settings()
+                if schema:
+                    # Determine module name
+                    if hasattr(plugin, "module_name"):
+                        module_name = plugin.module_name
+                    else:
+                        module_name = getattr(plugin, "__name__", "unknown")
+                    
+                    settings_service.register_schema(module_name, schema)
 
     def trigger_startup(self):
         """

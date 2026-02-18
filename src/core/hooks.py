@@ -1,10 +1,11 @@
-import pluggy
-from fastapi import FastAPI
+from typing import Any, Coroutine, List, Protocol, Type, Union
+from fastapi import APIRouter, FastAPI
 from beanie import Document
-from typing import List, Type
+from pluggy import HookimplMarker, HookspecMarker
+from pydantic import BaseModel
 
-hookspec = pluggy.HookspecMarker("webos")
-hookimpl = pluggy.HookimplMarker("webos")
+hookspec = HookspecMarker("webos")
+hookimpl = HookimplMarker("webos")
 
 class WebOSHookSpec:
     """
@@ -48,6 +49,13 @@ class WebOSHookSpec:
         """
         Hook to register cards/widgets for the Admin Dashboard.
         Modules should return a list of widgets or register them via a registry.
+        """
+
+    @hookspec
+    def register_settings() -> Type[BaseModel]:
+        """
+        Register a Pydantic model class representing the module's settings.
+        Settings will be persisted in the system_settings collection.
         """
 
     @hookspec

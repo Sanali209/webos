@@ -15,6 +15,7 @@ from src.core.module_loader import loader
 
 # Discover Modules (Top-level for router registration)
 loader.discover_and_load()
+loader.register_module_settings()
 
 if __name__ == "__main__":
     import sys
@@ -34,11 +35,16 @@ async def lifespan(app: FastAPI):
     # Setup Logging
     setup_logging()
     
+    from src.core.db_models.module_settings import ModuleSettingsDoc
     # Collect all models (Core + Modules)
-    all_models = [User] + loader.get_all_models()
+    all_models = [User, ModuleSettingsDoc] + loader.get_all_models()
     
     # Initialize DB
     await init_db(all_models)
+    
+    # Load Persistent Module Settings
+    from src.core.services.settings_service import settings_service
+    await settings_service.load_all()
     
     # Auto-seed Default Admin if no users exist
     from src.core.seeding import setup_default_user

@@ -3,6 +3,7 @@ from src.ui.layout import MainLayout
 from src.ui.registry import ui_registry, AppMetadata
 from src.core.hooks import hookimpl
 from .models import Secret
+from beanie import PydanticObjectId
 from src.core.auth import current_active_user
 from loguru import logger
 
@@ -30,7 +31,13 @@ async def vault_page():
                 ui.button("Go to Login", on_click=lambda: ui.navigate.to("/login")).classes("mt-4")
                 return
 
-        secrets = await Secret.find(Secret.owner_id == uid).to_list()
+        try:
+            # Convert string uid to PydanticObjectId for comparison
+            obj_id = PydanticObjectId(uid)
+            secrets = await Secret.find(Secret.owner_id == obj_id).to_list()
+        except Exception as e:
+            logger.error(f"Error fetching secrets: {e}")
+            secrets = []
         
         with ui.column().classes("w-full max-w-4xl gap-4"):
             with ui.row().classes("w-full justify-end"):
@@ -69,16 +76,23 @@ async def vault_page():
             pass_in = ui.input("Password", password=True)
             
             async def save():
-                s = Secret(
-                    label=label_in.value,
-                    username=user_in.value,
-                    password=pass_in.value,
-                    owner_id=uid
-                )
-                await s.insert()
-                ui.notify("Secret saved!")
-                add_dialog.close()
-                ui.navigate.to("/vault") # Refresh
+                try:
+                    obj_id = PydanticObjectId(uid)
+                    s = Secret(
+                        label=label_in.value,
+                        username=user_in.value,
+                        password=pass_in.value,
+                        owner_id=obj_id,
+                        created_by=obj_id,
+                        updated_by=obj_id
+                    )
+                    await s.insert()
+                    ui.notify("Secret saved!")
+                    add_dialog.close()
+                    ui.navigate.to("/vault") # Refresh
+                except Exception as e:
+                    logger.error(f"Error saving secret: {e}")
+                    ui.notify(f"Error: {e}", type="negative")
                 
             ui.button("Save", on_click=save).classes("w-full")
 

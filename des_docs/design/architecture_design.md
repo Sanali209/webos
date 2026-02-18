@@ -37,7 +37,7 @@ C4Container
         Component(taskiq, "TaskIQ Worker", "Python", "Background task processing (in-process or separate)")
         Component(pluggy, "Plugin Manager", "Pluggy", "Loads and manages modules")
         
-        Component(core, "Core Kernel", "Python Module", "Base services, Event Bus, Auth, Settings")
+        Component(core, "Core Kernel", "Python Module", "Base services, Event Bus, Auth, Settings Service, Auto-GUI SDK")
         Component(modules, "Business Modules", "Python Packages", "Inventory, HR, Analytics, etc.")
     }
 
@@ -64,6 +64,7 @@ classDiagram
         +register_event_listener(event, callback)
         +register_ui_slot(slot_name, component)
         +register_admin_panel(panel_config)
+        +register_settings(pydantic_model)
         +get_service(service_name)
     }
 
@@ -128,7 +129,7 @@ classDiagram
 3.  **Registration & Auto-Discovery**:
     *   **Auto-Discovery**: Scans `router.py`, `models.py`, `admin.py` in module dirs.
     *   **Hooks**: Calls `hook.register_routes()` (custom overrides).
-    *   **Wiring**: Mounts routers, collects Beanie documents, registers Admin pages.
+    *   **Wiring**: Mounts routers, collects Beanie documents, collects settings schemas, registers Admin pages.
 4.  **Startup**: `Beanie.init_beanie()` called with all collected documents (Auto + Hook).
 5.  **Server Start**: Uvicorn starts the app.
 
