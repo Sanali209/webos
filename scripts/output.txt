@@ -1,0 +1,43 @@
+[32m2026-02-18 06:43:17.183[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36mdiscover_and_load[0m:[36m71[0m - [1mDiscovering modules in src.modules[0m
+[32m2026-02-18 06:43:17.183[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.admin[0m
+[32m2026-02-18 06:43:17.184[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m98[0m - [34m[1mRegistered hooks for src.modules.admin[0m
+[32m2026-02-18 06:43:18.043[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.admin[0m
+[32m2026-02-18 06:43:18.043[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.admin loaded successfully[0m
+[32m2026-02-18 06:43:18.043[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.auth_ui[0m
+[32m2026-02-18 06:43:18.118[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.auth_ui[0m
+[32m2026-02-18 06:43:18.118[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.auth_ui loaded successfully[0m
+[32m2026-02-18 06:43:18.118[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.blogger[0m
+[32m2026-02-18 06:43:18.153[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.blogger[0m
+[32m2026-02-18 06:43:18.153[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.blogger loaded successfully[0m
+[32m2026-02-18 06:43:18.153[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.cache[0m
+[32m2026-02-18 06:43:18.154[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.cache loaded successfully[0m
+[32m2026-02-18 06:43:18.154[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.demo_dashboard[0m
+[32m2026-02-18 06:43:18.156[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m98[0m - [34m[1mRegistered hooks for src.modules.demo_dashboard[0m
+[32m2026-02-18 06:43:18.156[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.demo_dashboard[0m
+[32m2026-02-18 06:43:18.156[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.demo_dashboard loaded successfully[0m
+[32m2026-02-18 06:43:18.156[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.demo_hello_world[0m
+[32m2026-02-18 06:43:18.157[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.demo_hello_world loaded successfully[0m
+[32m2026-02-18 06:43:18.158[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.demo_report[0m
+[32m2026-02-18 06:43:18.166[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m98[0m - [34m[1mRegistered hooks for src.modules.demo_report[0m
+[32m2026-02-18 06:43:18.170[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.demo_report[0m
+[32m2026-02-18 06:43:18.171[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.demo_report loaded successfully[0m
+[32m2026-02-18 06:43:18.171[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.file_commander[0m
+[32m2026-02-18 06:43:18.176[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.file_commander[0m
+[32m2026-02-18 06:43:18.177[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.file_commander loaded successfully[0m
+[32m2026-02-18 06:43:18.177[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.storage[0m
+[32m2026-02-18 06:43:18.309[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m98[0m - [34m[1mRegistered hooks for src.modules.storage[0m
+[32m2026-02-18 06:43:18.310[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.storage loaded successfully[0m
+[32m2026-02-18 06:43:18.310[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m91[0m - [34m[1mLoading module: src.modules.vault[0m
+[32m2026-02-18 06:43:18.313[0m | [34m[1mDEBUG   [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m115[0m - [34m[1mAuto-registered UI hooks for src.modules.vault[0m
+[32m2026-02-18 06:43:18.313[0m | [1mINFO    [0m | [36msrc.core.module_loader[0m:[36m_load_module[0m:[36m120[0m - [1mModule src.modules.vault loaded successfully[0m
+🔍 Discovering modules...
+🎨 Registering UI components...
+
+✅ Found 7 registered apps:
+1. Vault (Route: /vault, Icon: security, System: False)
+2. File Explorer (Route: /file-commander, Icon: folder, System: False)
+3. Report Hub (Route: /demo/report, Icon: summarize, System: False)
+4. Demo Hub (Route: /demo, Icon: analytics, System: False)
+5. Blogger (Route: /blogger, Icon: article, System: False)
+6. Login (Route: /login, Icon: login, System: True)
+7. Admin Panel (Route: /admin, Icon: admin_panel_settings, System: True)

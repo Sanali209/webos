@@ -21,7 +21,7 @@ async def demo_auth():
             "full_name": "Test User"
         }
         logger.info(f"Registering user: {user_data['email']}")
-        resp = await client.post("/auth/register", json=user_data)
+        resp = await client.post("/api/auth/register", json=user_data)
         if resp.status_code == 201:
             logger.success("User registered successfully")
         elif resp.status_code == 400:
@@ -35,7 +35,7 @@ async def demo_auth():
             "username": "test@example.com",
             "password": "password123"
         }
-        resp = await client.post("/auth/jwt/login", data=login_data)
+        resp = await client.post("/api/auth/jwt/login", data=login_data)
         if resp.status_code == 200:
             token = resp.json()["access_token"]
             logger.success("Login successful")
@@ -43,7 +43,7 @@ async def demo_auth():
 
             # 4. Get Profile
             logger.info("Fetching user profile...")
-            resp = await client.get("/users/me", headers=headers)
+            resp = await client.get("/api/users/me", headers=headers)
             logger.success(f"User Profile: {resp.json()}")
         else:
             logger.error(f"Login failed: {resp.text}")

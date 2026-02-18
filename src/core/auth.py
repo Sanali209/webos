@@ -34,6 +34,7 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
+
 # 3. Authentication Backend
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
@@ -51,3 +52,11 @@ fastapi_users = FastAPIUsers[User, PydanticObjectId](get_user_manager, [auth_bac
 
 current_active_user = fastapi_users.current_user(active=True)
 current_superuser = fastapi_users.current_user(active=True, superuser=True)
+
+from src.core.middleware import user_id_context
+
+async def set_task_context(user: Optional[User] = Depends(fastapi_users.current_user(optional=True))):
+    """Dependency to set the user_id in the request context for background tasks."""
+    if user:
+        user_id_context.set(str(user.id))
+    return user

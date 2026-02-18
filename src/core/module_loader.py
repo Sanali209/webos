@@ -10,47 +10,47 @@ from loguru import logger
 
 from src.core.hooks import WebOSHookSpec, hookimpl
 
-class AutoDiscoveryHooks:
-    """
-    Hook implementation that follows naming conventions to discover models and routers.
-    """
+class AutoDiscoveryPlugin:
     def __init__(self, module_name: str):
         self.module_name = module_name
 
     @hookimpl
     def register_models(self) -> List[Type[Document]]:
         try:
-            models_mod = importlib.import_module(f"{self.module_name}.models")
+            models_mod_name = f"{self.module_name}.models"
+            logger.debug(f"Auto-discovering models in {models_mod_name}")
+            models_mod = importlib.import_module(models_mod_name)
             models = []
             for attr_name in dir(models_mod):
                 attr = getattr(models_mod, attr_name)
                 if isinstance(attr, type) and issubclass(attr, Document) and attr is not Document:
                     models.append(attr)
-            logger.debug(f"Auto-discovered {len(models)} models in {self.module_name}")
+            if models:
+                logger.debug(f"Found models in {self.module_name}: {[m.__name__ for m in models]}")
             return models
-        except ImportError as e:
-            if f"{self.module_name}.models" not in str(e):
-                logger.error(f"Error importing models for {self.module_name}: {e}")
+        except ImportError:
             return []
         except Exception as e:
-            logger.error(f"Unexpected error discovering models for {self.module_name}: {e}")
+            logger.error(f"Error discovering models in {self.module_name}: {e}")
             return []
 
     @hookimpl
     def register_routes(self, app: FastAPI):
-        logger.debug(f"Executing register_routes for {self.module_name}")
         try:
-            router_mod = importlib.import_module(f"{self.module_name}.router")
+            router_mod_name = f"{self.module_name}.router"
+            logger.debug(f"Auto-discovering routes in {router_mod_name}")
+            router_mod = importlib.import_module(router_mod_name)
             if hasattr(router_mod, "router"):
                 app.include_router(router_mod.router)
-                logger.info(f"Auto-registered router for {self.module_name} at {router_mod.router.prefix}")
-            else:
-                logger.warning(f"Module {self.module_name}.router has no 'router' attribute")
-        except ImportError as e:
-            if f"{self.module_name}.router" not in str(e):
-                logger.error(f"Error importing router for {self.module_name}: {e}")
+                logger.debug(f"Mounted router for {self.module_name}")
+        except ImportError:
+            pass
         except Exception as e:
-            logger.error(f"Unexpected error registering routes for {self.module_name}: {e}")
+            logger.error(f"Error discovering routes in {self.module_name}: {e}")
+
+def create_autodiscovery_hooks(module_name: str):
+    """Factory to create a plugin object for a specific module's auto-discovery."""
+    return AutoDiscoveryPlugin(module_name)
 
 class ModuleLoader:
     """
@@ -101,7 +101,20 @@ class ModuleLoader:
                 pass
 
             # Convention over Configuration: Auto-discover models and routers
-            self.pm.register(AutoDiscoveryHooks(module_name))
+            self.pm.register(create_autodiscovery_hooks(module_name))
+
+            # Auto-discover ui.py if it exists
+            ui_module_name = f"{module_name}.ui"
+            try:
+                # We want to know if the file exists but fails to import due to other errors
+                # pkgutil.get_loader can check if the module exists without importing it fully
+                ui_loader = pkgutil.get_loader(ui_module_name)
+                if ui_loader:
+                    ui_module = importlib.import_module(ui_module_name)
+                    self.pm.register(ui_module)
+                    logger.debug(f"Auto-registered UI hooks for {module_name}")
+            except Exception as e:
+                logger.error(f"Failed to auto-register UI logic for {module_name}: {e}")
             
             self.loaded_modules.append(module_name)
             logger.info(f"Module {module_name} loaded successfully")
@@ -124,6 +137,30 @@ class ModuleLoader:
         Trigger route registration hooks for all modules.
         """
         self.pm.hook.register_routes(app=app)
+
+    def register_ui(self):
+        """
+        Trigger UI registration hooks for all modules.
+        """
+        self.pm.hook.register_ui()
+
+    def register_data_sources(self, afs):
+        """
+        Trigger data source registration hooks for all modules.
+        """
+        self.pm.hook.register_data_sources(afs=afs)
+
+    def register_tasks(self, broker):
+        """
+        Trigger task registration hooks for all modules.
+        """
+        self.pm.hook.register_tasks(broker=broker)
+
+    def register_admin_widgets(self):
+        """
+        Trigger admin widget registration hooks.
+        """
+        self.pm.hook.register_admin_widgets()
 
     def trigger_startup(self):
         """

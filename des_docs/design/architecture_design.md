@@ -32,6 +32,7 @@ C4Container
 
     Container_Boundary(app_boundary, "WebOS Application") {
         Component(nicegui, "NiceGUI Frontend", "Python/Vue/Quasar", "Renders UI, manages state per client via WebSockets")
+        Component(command_palette, "Command Palette", "NiceGUI HUD", "Global Ctrl+K navigation and CLI-in-browser")
         Component(fastapi, "FastAPI Backend", "Python", "Handles HTTP API requests, Auth, static files")
         Component(taskiq, "TaskIQ Worker", "Python", "Background task processing (in-process or separate)")
         Component(pluggy, "Plugin Manager", "Pluggy", "Loads and manages modules")

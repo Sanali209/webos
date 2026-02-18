@@ -14,6 +14,7 @@ The **WebOS Framework** is a modular, extensible, and scalable platform designed
 *   **Backend**: FastAPI (Web framework), TaskIQ (Async tasks), Httpx (Async HTTP client).
 *   **Database**: MongoDB with **Beanie** (ODM).
 *   **Frontend**: **NiceGUI** (Server-side rendering, separate state per client).
+*   **Shell**: **Command Palette** (HUD) for unified "Shell in Shell" navigation.
 *   **Modularity**: **Pluggy** (Plugin management).
 *   **Authentication**: FastAPI Users (Security, User management).
 *   **Visualization**: Plotly, Highcharts (via generic JS wrappers or NiceGUI integration), AG Grid (Data tables).
@@ -72,6 +73,10 @@ Modules inherit from base classes provided by the Core to ensure consistency.
 *   **Auto Forms SDK**:
     *   Generates UI forms directly from Pydantic models.
     *   Supports validation visualization (red borders, error messages).
+
+*   **Shell in Shell (The HUD)**:
+    *   Unified **Command Palette** (`Ctrl+K`) for instant module navigation and search.
+    *   Global hotkey listener integrated into the base layout.
 
 ## 7. Task System (TaskIQ)
 *   **Background Processing**: Offloads long-running jobs (reports, data syncing).

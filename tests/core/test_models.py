@@ -16,5 +16,5 @@ def test_audit_mixin_timestamps():
 
 @pytest.mark.asyncio
 async def test_core_document_settings():
-    # CoreDocument is a Beanie document, we can check its settings
-    assert CoreDocument.get_settings().use_revision is True
+    # Check the Settings class directly to avoid requiring Beanie initialization
+    assert CoreDocument.Settings.use_revision is True
