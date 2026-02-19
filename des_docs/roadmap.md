@@ -439,3 +439,25 @@
 *   **Phase Completion & Documentation**:
     *   [ ] **Generate Documentation**: `Docs/sdk/data_explorer.md` and `Docs/core/module_settings.md`.
     *   [ ] **Tutorial**: "Creating a Settings-Powered Module in 5 Minutes".
+
+---
+
+## Phase 11: Digital Asset Management (DAM)
+**Goal**: Create a rich media library on top of the Abstract File System (AFS) to manage images, documents, and videos with metadata.
+
+*   **Subtasks**:
+    *   **DAM Module Foundation**
+        *   **Subtask**: Create `src/modules/dam`. Defining `Asset` model with metadata fields.
+        *   **Implementation Goal**: Database schema for tracking files managed by AFS.
+    *   **Asset Ingestion**
+        *   **Subtask**: Implement Upload Service using `AFS` backend.
+        *   **Implementation Goal**: Upload file -> Save to S3/Local -> Create DB Record.
+    *   **Visual Processing**
+        *   **Subtask**: Implement `ThumbnailGenerator` service (Pillow).
+        *   **Implementation Goal**: Auto-generate preview images for gallery view.
+    *   **UI - Asset Gallery**
+        *   **Subtask**: Build NiceGUI Gallery component with Grid View, Search, and Filtering.
+        *   **Implementation Goal**: "Google Photos" style interface.
+    *   **Integration**
+        *   **Subtask**: Create `AssetPicker` widget.
+        *   **Implementation Goal**: Allow other modules (e.g., Blog) to select assets seamlessly.
