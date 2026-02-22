@@ -10,6 +10,8 @@ class AppMetadata:
     description: str = ""
     category: str = "Utilities"
     is_system: bool = False
+    badge_text: Optional[str] = None
+    keyboard_shortcut: Optional[str] = None
     commands: List[str] = field(default_factory=list)
 
 class UIRegistry:

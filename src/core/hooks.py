@@ -69,3 +69,45 @@ class WebOSHookSpec:
         """
         Logic to run during application shutdown.
         """
+
+    @hookspec
+    def register_services():
+        """
+        Register core services (AssetService, VectorService, WatcherService) with the ServiceRegistry.
+        """
+
+    @hookspec
+    async def on_startup_async():
+        """
+        Async logic to run during application startup (e.g., Qdrant bootstrap, Watcher start).
+        """
+
+    @hookspec
+    def register_pipeline_processors() -> List[Any]:
+        """
+        Register AI processors (BLIP, CLIP, etc.) with the PipelineOrchestrator.
+        """
+
+    @hookspec
+    def register_asset_drivers() -> List[Any]:
+        """
+        Register type-specific metadata extractors (ImageDriver, VideoDriver) with AssetDriverManager.
+        """
+
+    @hookspec
+    def register_asset_types() -> List[Any]:
+        """
+        Register custom asset types (e.g., 'image', 'video', '3d_model') with the AssetTypeRegistry.
+        """
+
+    @hookspec
+    def register_vector_definitions() -> List[Any]:
+        """
+        Register vector embedding schemes (name, size, distance) for Qdrant setup.
+        """
+
+    @hookspec
+    def register_page_slots():
+        """
+        Register UI component builders into PageSlotRegistry for cross-module UI injection.
+        """

@@ -31,6 +31,18 @@ class Settings(BaseSettings):
     S3_BUCKET: str = "webos-uploads"
     S3_REGION: str = "us-east-1"
 
+    # DAM (Digital Asset Management)
+    QDRANT_URL: str = "http://localhost:6333"
+    QDRANT_API_KEY: Optional[str] = None
+    QDRANT_COLLECTION: str = "webos_vectors"
+    DAM_WATCH_PATHS: List[str] = []
+    DAM_CACHE_DIR: str = "data/dam_cache"
+    DAM_AI_ENABLED: bool = True
+    DAM_TAGGER_THRESHOLD: float = 0.3
+    DAM_DETECTION_THRESHOLD: float = 0.5
+    DAM_VECTOR_RELATION_THRESHOLD: float = 0.85
+    DAM_SYSTEM_OWNER_ID: str = "system" # Used for watcher events
+
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
 

@@ -106,9 +106,14 @@ class ModuleLoader:
                 else:
                     self.pm.register(hooks_module)
                     logger.debug(f"Registered hooks module for {module_name}")
-            except ImportError:
-                # No explicit hooks, that's fine
-                pass
+            except ModuleNotFoundError as e:
+                # Only ignore if the hooks.py file itself is missing
+                if e.name == f"{module_name}.hooks":
+                    pass
+                else:
+                    logger.error(f"ModuleNotFoundError inside {module_name}.hooks: {e}")
+            except Exception as e:
+                logger.error(f"Error loading hooks for {module_name}: {e}")
 
             # Convention over Configuration: Auto-discover models and routers
             self.pm.register(create_autodiscovery_hooks(module_name))
@@ -142,6 +147,28 @@ class ModuleLoader:
                 all_models.extend(models)
         return all_models
 
+    def get_all_asset_types(self) -> List[Any]:
+        """
+        Collect all asset types from all modules via hooks.
+        """
+        all_types = []
+        results = self.pm.hook.register_asset_types()
+        for types in results:
+            if types:
+                all_types.extend(types)
+        return all_types
+
+    def get_all_asset_drivers(self) -> List[Any]:
+        """
+        Collect all asset drivers from all modules via hooks.
+        """
+        all_drivers = []
+        results = self.pm.hook.register_asset_drivers()
+        for drivers in results:
+            if drivers:
+                all_drivers.extend(drivers)
+        return all_drivers
+
     def register_routes(self, app: FastAPI):
         """
         Trigger route registration hooks for all modules.
@@ -171,6 +198,27 @@ class ModuleLoader:
         Trigger admin widget registration hooks.
         """
         self.pm.hook.register_admin_widgets()
+
+    def register_module_services(self):
+        """
+        Trigger service registration hooks.
+        """
+        self.pm.hook.register_services()
+
+    async def trigger_startup_async(self):
+        """
+        Trigger async startup hooks concurrently. Wait for all to finish.
+        """
+        import asyncio
+        coros = self.pm.hook.on_startup_async()
+        if coros:
+            await asyncio.gather(*coros)
+
+    def register_all_page_slots(self):
+        """
+        Trigger page slot registration hooks.
+        """
+        self.pm.hook.register_page_slots()
 
     def register_module_settings(self):
         """

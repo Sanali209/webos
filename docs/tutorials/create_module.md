@@ -1,91 +1,72 @@
 # Tutorial: Create Your First Module
 
-This step-by-step guide will teach you how to build a simple "Hello World" module that includes a database model, an API endpoint, and a UI page integrated into the WebOS Launchpad.
+In this tutorial, we will build a minimal plugin module. WebOS uses convention-over-configuration, so simply creating files in the right place allows the `ModuleLoader` to discover them.
 
 ## 1. Create the Module Folder
 
-Create a new directory in `src/modules/` and add an empty `__init__.py` file to make it discoverable.
+Create a new directory in `src/modules/` called `hello_world`.
 
-```bash
-mkdir src/modules/hello_world
-touch src/modules/hello_world/__init__.py
-```
+## 2. Create the API Router
 
-## 2. Define a Data Model
+If a module contains a `router.py`, the system will automatically mount it to the REST API prefix `/api/hello_world`.
 
-Create `src/modules/hello_world/models.py`. We'll create a simple model to store greetings.
+Create `src/modules/hello_world/router.py`:
 
 ```python
-from src.core.models import CoreDocument
-from beanie import Document
-
-class Greeting(CoreDocument):
-    message: str
-    recipient: str
-
-    class Settings:
-        name = "greetings"
-```
-
-## 3. Create an API Endpoint
-
-Create `src/modules/hello_world/router.py`. This will allow us to create greetings via HTTP.
-
-```python
+# Example: Creating an auto-discovered API route
 from fastapi import APIRouter
-from .models import Greeting
 
 router = APIRouter()
 
-@router.post("/greetings")
-async def create_greeting(message: str, recipient: str):
-    greeting = Greeting(message=message, recipient=recipient)
-    await greeting.save()
-    return greeting
+@router.get("/ping")
+async def ping():
+    return {"message": "pong"}
 ```
 
-## 4. Build the UI Page
+*Test it:* Start the server (`python run.py`) and visit `http://localhost:8000/docs`. You will see `/api/hello_world/ping` automatically documented.
 
-Create `src/modules/hello_world/ui.py`. This uses NiceGUI to create a visual interface and registers the app with the WebOS Launchpad.
+## 3. Create a Database Model
+
+If a module contains a `models.py` with classes inheriting from `Document` or `CoreDocument`, they are automatically registered with Beanie on startup.
+
+Create `src/modules/hello_world/models.py`:
 
 ```python
-from nicegui import ui
-from src.ui.layout import MainLayout
-from src.ui.registry import ui_registry, AppMetadata
-from src.core.hooks import hookimpl
-from .models import Greeting
+# Example: Creating an auto-discovered Beanie Document
+from beanie import Document
+from pydantic import Field
 
-@ui.page("/hello")
-async def hello_page():
-    with MainLayout():
-        ui.label("Hello World Module").classes("text-3xl font-black")
-        
-        # Display existing greetings
-        greetings = await Greeting.find_all().to_list()
-        for g in greetings:
-            ui.label(f"{g.message}, {g.recipient}!")
+class GreetingRecord(Document):
+    message: str = Field(..., description="The greeting text")
+    count: int = 0
+```
+
+## 4. Register a UI Component
+
+To show up in the NiceGUI frontend, we use Pluggys `WebOSHookSpec`.
+
+Create `src/modules/hello_world/__init__.py`:
+
+```python
+# Example: Using hooks to register UI navigation
+from nicegui import ui
+from src.core.hooks import hookimpl
+from src.ui.registry import ui_registry
 
 @hookimpl
 def register_ui():
-    """Register the Hello World App on the Launchpad."""
-    ui_registry.register_app(AppMetadata(
+    @ui.page('/hello')
+    def hello_page():
+        ui.label('Hello World Module!').classes('text-2xl font-bold')
+
+    # Add a link to the main app launcher
+    ui_registry.register_app(
         name="Hello World",
         icon="waving_hand",
-        route="/hello",
-        description="My very first WebOS module."
-    ))
+        route="/hello"
+    )
 ```
 
-## 5. Verify Your Module
+## Conclusion
 
-1. **Restart the Server**: WebOS will auto-discover your new files.
-2. **Check the Launchpad**: You should see a new "Hello World" icon.
-3. **Visit the Page**: Click the icon or go to [http://localhost:8000/hello](http://localhost:8000/hello).
-4. **Test the API**: Open Swagger UI at [http://localhost:8000/api/docs](http://localhost:8000/api/docs) and try the `POST /api/greetings` endpoint.
-
----
-
-## Next Steps
-- Learn how to [Protect a Route](../howto/protect_route.md).
-- Understand the [UI & Layout System](../concepts/layout_system.md).
-- Explore the [Event Bus](../tutorials/core_concepts.md).
+Restart the server. You should now see a "Hello World" icon in the UI launcher and the `/api/hello_world/` routes in the Swagger docs.

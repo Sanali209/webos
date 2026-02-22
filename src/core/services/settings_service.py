@@ -38,6 +38,15 @@ class SettingsService:
         """Get the current settings for a module."""
         return self._cache.get(module_name)
 
+    def get_typed(self, module_name: str, schema_class: Type['T']) -> 'T':
+        """Get the current settings, asserting a specific Pydantic schema type."""
+        settings = self._cache.get(module_name)
+        if settings is None:
+            raise KeyError(f"No settings found for module '{module_name}'.")
+        if not isinstance(settings, schema_class):
+            raise TypeError(f"Settings for '{module_name}' is not of type {schema_class.__name__}.")
+        return settings
+
     async def update(self, module_name: str, values: Dict[str, Any]):
         """Update settings for a module and persist to DB."""
         if module_name not in self._schemas:

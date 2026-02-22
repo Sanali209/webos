@@ -11,24 +11,27 @@ class UI_Slot:
             "sidebar": [],
             "header": [],
             "dashboard_widgets": [],
-            "app_grid": []
+            "app_grid": [],
+            "asset_picker_overlay": [],
+            "command_palette_actions": []
         }
 
-    def add(self, slot_name: str, builder: Callable):
+    def add(self, slot_name: str, builder: Callable, module: str = "core"):
         """Register a builder function for a specific slot."""
-        if slot_name in self._slots:
-            self._slots[slot_name].append(builder)
-        else:
-            print(f"Warning: Slot {slot_name} does not exist.")
+        if slot_name not in self._slots:
+            self._slots[slot_name] = []
+        self._slots[slot_name].append(builder)
 
-    def render(self, slot_name: str):
-        """Execute all registered builders for a specific slot."""
+    def render(self, slot_name: str, **kwargs):
+        """Execute all registered builders for a specific slot, optionally passing kwargs."""
         if slot_name in self._slots:
             for builder in self._slots[slot_name]:
                 try:
-                    builder()
+                    builder(**kwargs)
                 except Exception as e:
+                    import traceback
                     print(f"Error rendering slot {slot_name}: {e}")
+                    traceback.print_exc()
 
 from src.ui.registry import ui_registry
 
@@ -43,8 +46,12 @@ class MainLayout:
 
     def render_app_card(self, app):
         """Renders a single app icon/card for the Launchpad."""
-        card = ui.card().classes("cursor-pointer hover:scale-105 transition-all duration-300 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center gap-3 w-full aspect-square")
+        card = ui.card().classes("cursor-pointer hover:scale-105 transition-all duration-300 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center gap-3 w-full aspect-square relative")
         with card:
+            # Badge Overlay
+            if app.badge_text:
+                ui.label(app.badge_text).classes("absolute top-2 right-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wider")
+            
             ui.icon(app.icon).classes("text-5xl text-primary mb-2")
             ui.label(app.name).classes("text-lg font-bold text-slate-800 text-center uppercase tracking-wider")
             if app.description:
@@ -117,6 +124,10 @@ class MainLayout:
 
         # Main Content
         self.render_command_palette()
+        
+        # Render invisible global overlays (like asset picker)
+        ui_slots.render("asset_picker_overlay")
+        
         self.content_container = ui.column().classes("w-full max-w-7xl mx-auto p-8 gap-8")
         self.content_container.__enter__()
         return self

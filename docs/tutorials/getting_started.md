@@ -1,88 +1,53 @@
-# Getting Started with WebOS
+# Getting Started Tutorial
 
-This tutorial will guide you from a fresh clone to a fully running WebOS development environment.
-
-## Quick Start
-
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/sanal/webos.git
-   cd webos
-   ```
-
-2. **Start Infrastructure**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Install Dependencies**
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -e .
-   ```
-
-4. **Launch WebOS**
-   ```bash
-   python run.py
-   ```
+This tutorial will walk you through starting the WebOS server from scratch, allowing you to access both the NiceGUI user interface and the FastAPI Swagger docs.
 
 ## Prerequisites
 
-- **Python 3.11+**: The core framework uses advanced type hinting and `contextvars`.
-- **Docker & Docker Compose**: Required for MongoDB, Redis (TaskIQ), and MinIO (S3).
-- **Git**: For version control.
+1.  Clone the repository and `cd` into it.
+2.  Start the background services:
+    ```bash
+    docker-compose up -d
+    ```
+3.  Activate your Python 3.11+ virtual environment and install dependencies:
+    ```bash
+    python -m venv .venv
+    # Windows
+    .venv\Scripts\activate
+    pip install -e .[dev]
+    ```
 
-## Step-by-Step Setup
+## Starting the Application
 
-### 1. Backing Services
-WebOS requires several services to operate. We provide a `docker-compose.yml` that handles this:
-- **MongoDB**: Primary document storage (Beanie).
-- **Redis**: Task broker for background workers.
-- **MinIO**: S3-compatible local storage for testing.
+While you can start `uvicorn` and `taskiq` separately, the easiest way to launch the entire WebOS framework is simply by running the `run.py` script.
+
+This script detects your environment and automatically launches both the fast API server and the background workers.
 
 ```bash
-docker-compose up -d
-```
-Verify they are running with `docker-compose ps`.
-
-### 2. Python Environment
-We recommend using a virtual environment.
-
-```bash
-python -m venv .venv
-# Activate
-source .venv/bin/activate # Linux/Mac
-.venv\Scripts\activate    # Windows
-```
-
-Install the package in editable mode:
-```bash
-pip install -e .
-```
-
-### 3. Environment Variables
-Create a `.env` file in the root (a `.env.example` is provided if available, otherwise use defaults):
-
-```env
-PROJECT_NAME="WebOS Dev"
-SECRET_KEY="your-super-secret-key"
-MONGO_URL="mongodb://localhost:27017"
-REDIS_URL="redis://localhost:6380"
-```
-
-### 4. Running the App
-Start the main server:
-```bash
+# Example: Starting the server
 python run.py
 ```
-Wait for the log: `NiceGUI ready to go on http://localhost:8000`.
 
-Open your browser to [http://localhost:8000](http://localhost:8000).
+### Expected Output
 
----
+You should see log output detailing the auto-discovery of modules and then the server starting:
+
+```
+🚀 Starting WebOS Server...
+INFO:     Started server process [1234]
+INFO:     Waiting for application startup.
+✅ WebOS started successfully!
+🔗 UI: http://localhost:8000
+🛠️  API: http://localhost:8000/docs
+```
+
+## Exploring WebOS
+
+Once running, try the following:
+
+1.  Open [http://localhost:8000](http://localhost:8000) in your browser. You will see the main WebOS interface rendered by NiceGUI.
+2.  Open [http://localhost:8000/docs](http://localhost:8000/docs) to see the automatically generated Swagger API documentation for all discovered modules.
 
 ## Next Steps
-- Learn how to [Create Your First Module](../tutorials/create_module.md).
-- Explore the [Architecture Overview](../concepts/architecture.md).
-- Check out the [Full System Walkthrough](../tutorials/system_walkthrough.md).
+
+Now that you have the environment running, let's learn how to [Create Your First Module](./create_module.md).

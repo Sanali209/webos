@@ -442,22 +442,21 @@
 
 ---
 
-## Phase 11: Digital Asset Management (DAM)
-**Goal**: Create a rich media library on top of the Abstract File System (AFS) to manage images, documents, and videos with metadata.
+## Phase 11–20: Digital Asset Management (DAM)
+**Goal**: Build the full DAM module — vector search, AI enrichment pipeline, hybrid search, and rich NiceGUI UI — as a first-class WebOS module.
 
-*   **Subtasks**:
-    *   **DAM Module Foundation**
-        *   **Subtask**: Create `src/modules/dam`. Defining `Asset` model with metadata fields.
-        *   **Implementation Goal**: Database schema for tracking files managed by AFS.
-    *   **Asset Ingestion**
-        *   **Subtask**: Implement Upload Service using `AFS` backend.
-        *   **Implementation Goal**: Upload file -> Save to S3/Local -> Create DB Record.
-    *   **Visual Processing**
-        *   **Subtask**: Implement `ThumbnailGenerator` service (Pillow).
-        *   **Implementation Goal**: Auto-generate preview images for gallery view.
-    *   **UI - Asset Gallery**
-        *   **Subtask**: Build NiceGUI Gallery component with Grid View, Search, and Filtering.
-        *   **Implementation Goal**: "Google Photos" style interface.
-    *   **Integration**
-        *   **Subtask**: Create `AssetPicker` widget.
-        *   **Implementation Goal**: Allow other modules (e.g., Blog) to select assets seamlessly.
+> **This phase family is fully detailed in [`des_docs/design/dam/dam_roadmap.md`](file:///d:/github/webos/des_docs/design/dam/dam_roadmap.md)**
+> It maps 1-to-1 with the 10 sections of `dam_design.md` and includes subtasks, tests, degradation tests, and knowledge capture for each phase.
+
+| Phase | Covers | Design ref |
+|-------|--------|------------|
+| **11** | Framework Preparation — hooks, Qdrant docker, config, `UI_Slot` enhancements, `PageSlotRegistry` | `§9 + §10` |
+| **12** | Asset Model — `Asset`, `Link`, `Album` Beanie models + module skeleton | `§1` |
+| **13** | Asset Type System — `AssetTypeRegistry`, 5 built-in type definitions | `§2` |
+| **14** | Asset Drivers — `ImageDriver`, `VideoDriver`, `AudioDriver`, `DocumentDriver` + `AssetDriverManager` | `§3` |
+| **15** | Core Services — `AssetService` (ingest/delete/dedup), `ThumbnailGenerator`, `WatcherService` | `§5.1–5.3, 5.5` |
+| **16** | Vector Service — `VectorService` + Qdrant collections (`clip_image`, `clip_text`) | `§5.4` |
+| **17** | AI Pipeline — CLIP, BLIP, SmileWolf Tagger, detection, vector relations, `PipelineOrchestrator` | `§6` |
+| **18** | Search & Discovery — `UnifiedSearchService`, RRF fusion, cursor pagination, facets | `§5.6` |
+| **19** | API Layer — all REST endpoints (CRUD, search, graph, albums, pipeline) | `§7` |
+| **20** | UI & Integration — Gallery, Viewer, Picker overlay, admin widget, Blogger integration | `§8 + §10.3–10.7` |

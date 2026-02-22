@@ -1,0 +1,241 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\sanal\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+PySide6 6.7.2 -- Qt runtime 6.7.2 -- Qt compiled 6.7.2
+rootdir: D:\github\webos
+configfile: pyproject.toml
+plugins: anyio-4.3.0, asyncio-1.2.0, mock-3.15.0, qt-4.5.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... Windows fatal exception: code 0xc0000139
+
+Current thread 0x000044ec (most recent call first):
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\ctypes\__init__.py", line 376 in __init__
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_ops.py", line 1392 in load_library
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\torchvision\extension.py", line 34 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\torchvision\__init__.py", line 9 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "D:\github\webos\src\modules\dam\processors\structural_processor.py", line 6 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "D:\github\webos\src\modules\dam\hooks.py", line 33 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py", line 126 in import_module
+  File "D:\github\webos\src\core\module_loader.py", line 102 in _load_module
+  File "D:\github\webos\src\core\module_loader.py", line 90 in discover_and_load
+  File "D:\github\webos\src\main.py", line 17 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "D:\github\webos\tests\modules\dam\test_backend_gaps.py", line 9 in <module>
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\assertion\rewrite.py", line 186 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py", line 126 in import_module
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\pathlib.py", line 587 in import_path
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 498 in importtestmodule
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 551 in _getobj
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 280 in obj
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 567 in _register_setup_module_fixture
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 554 in collect
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 389 in collect
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 344 in from_call
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 391 in pytest_make_collect_report
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 567 in collect_one_node
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 839 in _collect_one_node
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 974 in genitems
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 813 in perform_collect
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 353 in pytest_collection
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 342 in _main
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 289 in wrap_session
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 336 in pytest_cmdline_main
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\config\__init__.py", line 175 in main
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\config\__init__.py", line 201 in console_main
+  File "C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\pytest\__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main
+collected 5 items
+
+tests/modules/dam/test_backend_gaps.py::test_ai_processors_registration FAILED [ 20%]
+tests/modules/dam/test_backend_gaps.py::test_album_crud FAILED           [ 40%]
+tests/modules/dam/test_backend_gaps.py::test_graph_links_endpoint FAILED [ 60%]
+tests/modules/dam/test_backend_gaps.py::test_full_ai_pipeline_execution FAILED [ 80%]
+tests/modules/dam/test_backend_gaps.py::test_search_graph_expansion FAILED [100%]
+
+================================== FAILURES ===================================
+_______________________ test_ai_processors_registration _______________________
+
+mock_db = None
+
+    @pytest.mark.asyncio
+    async def test_ai_processors_registration(mock_db):
+        # We need to make sure the real orchestrator is registered
+>       from src.modules.dam.hooks import DAMHooks
+
+tests\modules\dam\test_backend_gaps.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\modules\dam\hooks.py:33: in <module>
+    from src.modules.dam.processors.structural_processor import StructuralProcessor
+src\modules\dam\processors\structural_processor.py:6: in <module>
+    from torchvision import models, transforms
+C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\torchvision\__init__.py:10: in <module>
+    from torchvision import _meta_registrations, datasets, io, models, ops, transforms, utils  # usort:skip
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\torchvision\_meta_registrations.py:25: in <module>
+    @register_meta("roi_align")
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+fn = <function meta_roi_align at 0x000001875197C0E0>
+
+    def wrapper(fn):
+>       if torchvision.extension._has_ops():
+           ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: partially initialized module 'torchvision' has no attribute 'extension' (most likely due to a circular import)
+
+C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\torchvision\_meta_registrations.py:18: AttributeError
+_______________________________ test_album_crud _______________________________
+
+client = <httpx.AsyncClient object at 0x00000187519B1290>, mock_db = None
+
+    @pytest.mark.asyncio
+    async def test_album_crud(client, mock_db):
+        # 1. Create Album
+        resp = await client.post("/api/dam/albums", json={"title": "Travel", "description": "Vacation photos"})
+>       assert resp.status_code == 201
+E       assert 404 == 201
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\modules\dam\test_backend_gaps.py:53: AssertionError
+------------------------------ Captured log call ------------------------------
+WARNING  nicegui:nicegui.py:147 http://test/api/dam/albums not found
+__________________________ test_graph_links_endpoint __________________________
+
+client = <httpx.AsyncClient object at 0x00000187518851D0>, mock_db = None
+
+    @pytest.mark.asyncio
+    async def test_graph_links_endpoint(client, mock_db):
+        aid1 = PydanticObjectId()
+        aid2 = PydanticObjectId()
+    
+        link = Link(source_id=aid1, target_id=aid2, relation="visually_similar_to", weight=0.9)
+        await link.insert()
+    
+        resp = await client.get(f"/api/dam/assets/{aid1}/links")
+>       assert resp.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\modules\dam\test_backend_gaps.py:81: AssertionError
+------------------------------ Captured log call ------------------------------
+WARNING  nicegui:nicegui.py:147 http://test/api/dam/assets/699934bde8f1ad1790d73057/links not found
+_______________________ test_full_ai_pipeline_execution _______________________
+
+mock_db = None
+
+    @pytest.mark.asyncio
+    async def test_full_ai_pipeline_execution(mock_db):
+        # Mocking storage and external ML calls to verify orchestration
+        asset = Asset(
+            filename="ai_test.jpg",
+            storage_urn="fs://local/ai_test.jpg",
+            owner_id=PydanticObjectId(),
+            asset_types=["image"]
+        )
+        await asset.insert()
+    
+>       orchestrator = ServiceRegistry.get(PipelineOrchestrator)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\dam\test_backend_gaps.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = <class 'src.core.registry.ServiceRegistry'>
+interface = <class 'src.modules.dam.services.pipeline_orchestrator.PipelineOrchestrator'>
+
+    @classmethod
+    def get(cls, interface: Type[T]) -> T:
+        """
+        Retrieve the implementation for a given interface.
+        Raises ValueError if not registered.
+        """
+        service = cls._services.get(interface)
+        if not service:
+>           raise ValueError(f"Service for {interface.__name__} not registered.")
+E           ValueError: Service for PipelineOrchestrator not registered.
+
+src\core\registry.py:30: ValueError
+_________________________ test_search_graph_expansion _________________________
+
+client = <httpx.AsyncClient object at 0x0000018751A67ED0>, mock_db = None
+
+    @pytest.mark.asyncio
+    async def test_search_graph_expansion(client, mock_db):
+        # Create seeds and linked assets
+        aid1 = PydanticObjectId() # Result from keyword/vector
+        aid2 = PydanticObjectId() # Neighbor in graph
+    
+>       asset1 = Asset(id=aid1, filename="beach.jpg", owner_id=PydanticObjectId(), title="Beach")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\dam\test_backend_gaps.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Asset(), args = ()
+kwargs = {'filename': 'beach.jpg', 'id': ObjectId('699934bde8f1ad1790d7305c'), 'owner_id': ObjectId('699934bde8f1ad1790d7305e'), 'title': 'Beach'}
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+>       super(Document, self).__init__(*args, **kwargs)
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for Asset
+E       storage_urn
+E         Field required [type=missing, input_value={'id': ObjectId('699934bd...05e'), 'title': 'Beach'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\beanie\odm\documents.py:208: ValidationError
+============================== warnings summary ===============================
+C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\formparsers.py:12
+  C:\Users\sanal\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/modules/dam/test_backend_gaps.py::test_ai_processors_registration - AttributeError: partially initialized module 'torchvision' has no attribute 'extension' (most likely due to a circular import)
+FAILED tests/modules/dam/test_backend_gaps.py::test_album_crud - assert 404 == 201
+ +  where 404 = <Response [404 Not Found]>.status_code
+FAILED tests/modules/dam/test_backend_gaps.py::test_graph_links_endpoint - assert 404 == 200
+ +  where 404 = <Response [404 Not Found]>.status_code
+FAILED tests/modules/dam/test_backend_gaps.py::test_full_ai_pipeline_execution - ValueError: Service for PipelineOrchestrator not registered.
+FAILED tests/modules/dam/test_backend_gaps.py::test_search_graph_expansion - pydantic_core._pydantic_core.ValidationError: 1 validation error for Asset
+storage_urn
+  Field required [type=missing, input_value={'id': ObjectId('699934bd...05e'), 'title': 'Beach'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+======================== 5 failed, 1 warning in 19.16s ========================

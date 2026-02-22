@@ -10,8 +10,12 @@ A Modular Monolith framework designed for rapid development of complex internal 
 ## Getting Started
 
 ### Prerequisites
-*   Python 3.11+
-*   Docker & Docker Compose
+
+- Python 3.11+
+- MongoDB instance (remote or local via Docker)
+- Redis instance (for TaskIQ background workers)
+- Qdrant instance (for vector search capabilities)
+- `ffprobe` executable in your system PATH (required for DAM Video processing)
 
 ### Fast Start
 1.  Clone the repository:

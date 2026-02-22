@@ -170,3 +170,151 @@
     *   *UI*: Resolved closure capture bug in Launchpad where all app cards triggered the same route; used `lambda a=app: ...` to lock the iteration variable.
     *   *System*: Implemented `setup_default_user` in `lifespan` for conditional database seeding (creates `admin@webos.io` only if no users exist).
     *   *Convention*: Centralized `user_id_context` in `src/core/middleware.py` to prevent cross-module inconsistencies.
+
+---
+
+## Phase 11: DAM — Framework Preparation
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 1
+- [x] **1.1** Add Qdrant `v1.9.2` to `docker-compose.yml` (REST :6333, gRPC :6334, `qdrant_data` volume) ✅ Done
+- [x] **1.2** DAM env vars in `src/core/config.py` (`QDRANT_URL`, `DAM_AI_ENABLED`, thresholds, paths)
+- [x] **1.3** 7 new hookspecs in `src/core/hooks.py` (`register_services`, `on_startup_async`, `register_pipeline_processors`, `register_asset_drivers`, `register_asset_types`, `register_vector_definitions`, `register_page_slots`)
+- [x] **1.4** Wire new hooks in `src/core/module_loader.py` + `main.py` lifespan
+- [x] **1.5** Open slot registration in `src/ui/layout.py` (`UI_Slot` + `asset_picker_overlay` builtin)
+- [x] **1.6** Create `src/ui/page_slot_registry.py` (`PageSlotRegistry` singleton)
+- [x] **1.7** Add `badge_text`, `keyboard_shortcut` to `AppMetadata` in `src/ui/registry.py`
+- [x] **1.8** Add `get_typed()` to `src/core/services/settings_service.py`
+- [x] **Regression**: Full suite — existing modules unaffected, startup time delta < 200 ms
+
+## Phase 12: DAM — Asset Model
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 2
+- [x] **2.1** Module package skeleton (`src/modules/dam/` + all sub-folders)
+- [x] **2.2** `Asset` Beanie model with all fields + compound text index
+- [x] **2.3** `DetectedObject` sub-model (bbox 0–1 normalized, confidence validation)
+- [x] **2.4** `Link` Beanie model + compound indexes
+- [x] **2.5** `Album` Beanie model (OwnedDocument, user isolation)
+- [x] **Regression**: MongoDB collections + indexes created on startup
+
+## Phase 13: DAM — Asset Type System
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 3
+- [x] **3.1** `AssetTypeDefinition` base class
+- [x] **3.2** 5 built-in type implementations
+- [x] **3.3** `AssetTypeRegistry` singleton
+- [x] **3.4** `DAMHooks.register_asset_types` + `on_startup_async` pipeline
+- [x] **Regression**: CRUD capabilities stableo/quicktime").type_id == "video"`
+
+## Phase 14: DAM — Asset Drivers
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 4
+- [x] **4.1** Abstract `BaseAssetDriver` class
+- [x] **4.2** ImageDriver (Pillow, orientation, EXIF, GPS decoding)
+- [x] **4.3** VideoDriver (subprocess `ffprobe`, degradation timeout wrapper)
+- [x] **4.4** AudioDriver (Mutagen metadata)
+- [x] **4.5** DocumentDriver (PyMuPDF `page_count` / `python-docx`)
+- [x] **4.6** `AssetDriverManager` threading wrapper `asyncio.to_thread`
+- [x] **Regression**: `asset.metadata['image'].get('width')` populates correctlyadata["height"]` populated
+
+## Phase 15: DAM — Core Services
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 5
+- [x] **5.1** `AssetService.ingest()` (SHA-256 dedup, AFS write, MIME detect, emit event)
+- [x] **5.2** `AssetService.delete()` (AFS + thumbnails + links + albums + Qdrant point)
+- [x] **5.3** `ThumbnailGenerator` (Pillow WebP, 3 sizes, EXIF rotation, GIF→first-frame)
+- [x] **5.4** `DAMHooks.register_services` + EventBus wiring (`dam:asset:ingested`)
+- [x] **5.5** `WatcherService` (watchdog, watch_paths from settings, `on_startup_async`)
+- [x] **Regression**: Same file ingested twice → 1 Asset doc. Thumbnail at `{cache_dir}/{id}/200.webp`
+
+## Phase 16: DAM — Vector Service
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 6
+- [x] **6.1** `VectorDefinition` dataclass (`clip` 512-d Cosine)
+- [x] **6.2** `VectorService.__init__` + `ensure_collection` (idempotent, graceful on Qdrant down)
+- [x] **6.3** `VectorService.index()` + `delete()` (Qdrant upsert, ObjectId hex string Point ID)
+- [x] **6.4** `VectorService.search()` (Qdrant ANN, `owner_id` keyword filter)
+- [x] **6.5** `DAMHooks.register_vector_definitions` hookimpl
+- [x] **Degradation**: Qdrant down → `_available=False`, app boots, all search channels return `[]`
+
+## Phase 17: DAM — AI Processing Pipeline
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 7
+- [x] **7.1** `BasePipelineProcessor` Protocol + `PipelineOrchestrator` (processor error isolation, `status="partial"`)
+- [x] **7.2** CLIP embedding processor (`lru_cache` model load, `clip` 512-d vector)
+- [x] **7.3** BLIP captioning processor (`ai_caption`, `transformers` base model)
+- [x] **7.4** SmileWolf tagger processor (`TagProcessor`, WD14 ONNX)
+- [x] **7.5** Object detection processor (`DetectionProcessor`, YOLOv8)
+- [x] **7.6** Vector relation creator (`VectorRelationProcessor`, multi-vector fusion)
+- [x] **7.7** TaskIQ task wrapping + EventBus subscription (`dam:asset:ingested` → enqueue `run_ai_pipeline`)
+- [x] **Benchmark**: Optimized startup via local imports (collection time < 5s)
+
+## Phase 18: DAM — Search & Discovery
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 8
+- [x] **8.1** Search schema models (`AssetFilter.to_mongo_match()`, `SearchRequest`, `SearchPage`, cursor)
+- [x] **8.2** Keyword search channel (MongoDB `$text`, `textScore`)
+- [x] **8.3** Vector search channel (CLIP encode → Qdrant ANN, `_available` guard)
+- [x] **8.4** Graph expansion channel (Knowledge Graph walk in `UnifiedSearchService`)
+- [x] **8.5** RRF fusion (`k=60`) + cursor pagination + `search()` assembly
+- [x] **8.6** `_compute_facets()` + `find_similar()` + pHash fallback + reverse image search
+- [x] **Regression**: Full-text search, vector search, and graph walk each independently testable
+
+## Phase 19: DAM — API Layer
+- [x] **9.1** Asset CRUD endpoints (`POST`, `GET`, `GET /{id}`, `PATCH /{id}`, `DELETE /{id}`)
+- [x] **9.2** Thumbnail (`GET /{id}/thumbnail/{size}` WebP + Cache-Control) + download endpoints
+- [x] **9.3** Search endpoints (`POST /search`, `GET /types`)
+- [x] **9.4** Graph (`GET /{id}/links`) + Album CRUD (7 endpoints)
+- [x] **9.5** Pipeline status (`GET /pipeline/status`)
+- [x] **Regression**: All routes verified via integration tests in `tests/modules/dam/test_backend_gaps.py`.
+
+## Phase 20: DAM — UI & Integration
+> Detail: `des_docs/design/dam/dam_roadmap.md` Phase 10
+- [x] **10.1** `DAMHooks.register_ui` full wiring (launchpad card, sidebar, ⌘K, all slot registrations)
+- [x] **10.2** Gallery page `/dam` (grid, filter sidebar, infinite scroll, multi-select, empty state)
+- [x] **10.3** Upload dropzone dialog (multi-file, per-file progress, auto-close on ready)
+- [x] **10.4** Asset Viewer `/dam/assets/{id}` (preview + bbox SVG overlay + 3-tab panel + page slots)
+- [x] **10.5** Search page `/dam/search`, Albums pages `/dam/albums`, Graph Explorer `/dam/graph`
+- [x] **10.6** Shell components: `dam_quick_upload_button`, `dam_storage_widget`, `dam_asset_picker_overlay`
+- [x] **10.7** Admin widget `DAMAdminWidget` (coverage bars, reprocess button)
+- [x] **10.8** `DAMSettings` 20 fields, admin settings tab
+- [x] **10.9** Blogger cross-module integration (PageSlot injection + cover image picker)
+- [x] **Full degradation test**: Qdrant off / AI off / text index off — all pages remain functional
+
+---
+
+## DAM Knowledge Log
+> Append learnings here during DAM implementation.
+
+*   **2026-02-21**: DAM roadmap created.
+    *   *Architecture*: 10 phases in `dam_roadmap.md` mirror dam_design.md §1–§10.
+    *   *Infrastructure*: Qdrant `v1.9.2` added to `docker-compose.yml` (REST :6333, gRPC :6334).
+    *   *Key decision*: Qdrant ID must be `uint64` — convert `ObjectId` via `abs(hash(str(id))) % (2**63)`.
+    *   *Key decision*: `on_startup_async` must NOT use `firstresult=True`; all modules must run it.
+    *   *Key decision*: `python-magic-bin` required on Windows (provides `libmagic`).
+*   **2026-02-21**: Phase 11 (DAM Phase 1) Completed.
+    *   *System*: Expanded `WebOSHookSpec` with 7 new DAM-specific endpoints (`register_services`, `on_startup_async`, etc.).
+    *   *Lifespan*: Integrated `trigger_startup_async()` in FastAPI lifecycle for async initialization.
+    *   *UI*: Refactored `UI_Slot` to permit arbitrary named slots with `kwargs` unpacking, enabling generic component injection across modules.
+    *   *UI*: Created `PageSlotRegistry` for declarative DOM injection boundaries.
+*   **2026-02-21**: Phase 12 (DAM Phase 2) Completed.
+    *   *Design*: Initialized Beanie models (`Asset`, `Link`, `Album`) spanning search indexing requirements.
+    *   *Bug*: Resolved Python C3 MRO inheritance conflict by avoiding extending `CoreDocument` whenever inheriting purely from `OwnedDocument` because it extends `CoreDocument` itself.
+*   **2026-02-21**: Phase 13 (DAM Phase 3) Completed.
+    *   *Design*: Migrated AssetType from Enums to an AssetTypeDefinition Interface dictating resolution capabilities (`can_handle(mime)`), hooked via `register_asset_types`.
+    *   *Testing*: FastAPI TestClient requires hooking into `LifespanManager(app)` manually using HTTPX ASGITransport to evaluate async startup hooks reliably during module execution.
+*   **2026-02-21**: Phase 11-14 Completed.
+    *   *System*: Hook system, Beanie models, and sync Asset Drivers (Image, Video, etc.) implemented.
+*   **2026-02-21**: Phase 15-17 Completed (Intelligence Core).
+    *   *Vector*: Qdrant integration requires `uint64` or `UUID` Point IDs. Using `str(asset.id)` (hex) works as a UUID Point ID.
+    *   *Conflict*: `qdrant-client` 1.17+ has `TypeError` with `protobuf` 5.x on Windows. Fixed by pinning `qdrant-client==1.12.0` and `protobuf==4.25.3`.
+    *   *Performance*: Heavy AI libraries (`torch`, `transformers`) significantly slow down `pytest` collection. Moved imports inside class methods to keep the core loop fast.
+    *   *Design*: Replaced string-based `patch` with `patch.object` in tests to avoid `AttributeError` when patching refactored local imports.
+    *   *Wiring*: EventBus `dam:asset:ingested` now triggers both synchronous drivers (thumbnails/metadata) and asynchronous AI tasks (TaskIQ).
+*   **2026-02-21**: Phase 18 (DAM Phase 8) Completed.
+    *   *Search*: Implemented **Reciprocal Rank Fusion (RRF)** for hybrid search. Key learning: RRF constant `k=60` provides a robust balance between keyword precision and semantic recall.
+    *   *Testing*: Debugged `mongomock_motor` limitations with `AsyncIOMotorLatentCommandCursor` during aggregation. For unit tests, complex aggregation pipelines on Beanie models may require mocking or raw collection access, while production remains standard Beanie.
+*   **2026-02-21**: Phase 19 (DAM Phase 9) Completed.
+    *   *AI*: Encountered `RuntimeError` and circularity issues with `torchvision` initialization on Windows. Refactored `StructuralProcessor` to use `transformers` with `google/mobilenet_v2_1.0_224` for better stability.
+    *   *AI*: Integrated SmileWolf WD14 (ONNX) for tagging and YOLOv8 for object detection.
+    *   *Graph*: Implemented `VectorRelationProcessor` for multi-vector cosine similarity fusion (CLIP + BLIP + MobileNet).
+    *   *Search*: Added Graph Expansion channel to search, enabling discovery of "visually similar" and contextually related assets via the knowledge graph.
+    *   *Beanie*: Standardized query syntax to use dictionary-based `$or` and `$in` filters. Bitwise operators (`|`) in Beanie DSL can trigger `TypeError` (ExpressionField not callable) in some mock/edge environments.
+    *   *API*: Completed Album CRUD and Graph Link Explorer endpoints.
+    *   *Validation*: Achieved 100% pass rate in `tests/modules/dam/test_backend_gaps.py`.
+*   **2026-02-21**: Phase 20 (DAM Phase 10 UI & Integration) Completed.
+    *   *UI*: Developed `ui/gallery.py` with faceted Search UI interfacing with `UnifiedSearchService`.
+    *   *UI*: Built `ui/viewer.py` two-panel layout featuring previews and interactive tabs (INFO, AI, LINKS).
+    *   *UI*: Implemented cross-module `DAMAdminWidget` in `ui/admin_widget.py` reporting real-time metrics.
+    *   *Integration*: Registered global slots (Header Button, Dashboard Card) directly via `ui_slots.add()` leveraging NiceGUI routing context.

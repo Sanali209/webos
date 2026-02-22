@@ -1,65 +1,45 @@
 # Architecture Overview
 
-WebOS is designed as a **Modular Monolith**. It provides a robust, opinionated "Kernel" (Core) that handles essential system services, while allowing business logic to be encapsulated in independent "Modules".
+WebOS is designed as a **Modular Monolith**. It provides a robust, opinionated "Kernel" (Core) that handles essential system services, while allowing business logic and UI components to be encapsulated in independent "Modules". 
+
+It is built on a stack of **FastAPI**, **NiceGUI**, and **Pluggy**.
 
 ## Core Principles
 
-1. **Separation of Concerns**: The Kernel manages infrastructure (Auth, DB, Event Bus, Tasks) while Modules manage business domains.
-2. **Convention over Configuration**: Modules are auto-discovered and auto-wired based on standard file names (e.g., `router.py`, `models.py`).
-3. **Decoupled Communication**: Modules communicate primarily via the asynchronous Event Bus.
+1. **Separation of Concerns**: The Kernel manages infrastructure (Auth, DB initialization, Module Loading, Service Registry) while Modules manage business domains.
+2. **Convention over Configuration & Auto-Discovery**: Modules are auto-discovered from the `src/modules/` directory. If a module has a `models.py` or `router.py`, the system will automatically mount of them without explicit wiring, reducing boilerplate.
+3. **Decoupled Extension**: Functionality that cannot be auto-discovered uses **Pluggy** hooks.
 
 ## The WebOS Spine (Kernel)
 
-### 1. The Service Registry (DI)
-The `ServiceRegistry` is a singleton that manages dependency injection. It allows modules to register implementations for generic interfaces.
+### 1. The Module Loader (`src.core.module_loader`)
+
+The `ModuleLoader` singleton is responsible for discovering plugins, creating auto-discovery instances (e.g., auto-discovering API routes from `router.py`), and triggering lifecycle hooks across all loaded modules.
+
+Modules can hook into various lifecycle events such as `on_startup`, `register_routes`, `register_ui`, and `register_tasks` defined in the `WebOSHookSpec` (`src.core.hooks`).
+
+### 2. The Service Registry (`src.core.registry`)
+
+The `ServiceRegistry` singleton manages dependency injection for the entire application. Instead of modules directly importing concrete implementations from one another (which creates circular dependencies), they depend on interfaces.
 
 ```python
 from src.core.registry import registry
+from src.modules.email.interfaces import EmailServiceInterface
 
-# Register a service
-registry.register("email_service", SMTPEmailService())
+# App startup: register a service
+registry.register(EmailServiceInterface, SmtpEmailService())
 
-# Retrieve a service
-mailer = registry.get("email_service")
+# In a different module: Retrieve the service
+mailer = registry.get(EmailServiceInterface)
+mailer.send("hello@example.com")
 ```
 
-### 2. The Event Bus
-The Event Bus facilitates loosely coupled communication between modules. When something interesting happens in Module A, it emits an event; Module B can listen and react.
+### 3. FastAPI and NiceGUI
 
-```python
-from src.core.event_bus import bus
+WebOS uses **FastAPI** as the foundational async web framework serving REST APIs, handling authentication, and orchestrating the backend.
 
-# Emit an event
-await bus.emit("user:logged_in", {"user_id": "123"})
-
-# Subscribe to an event
-@bus.on("user:logged_in")
-async def send_welcome_email(payload):
-    print(f"Sending welcome to {payload['user_id']}")
-```
-
-### 3. Unified Storage (AFS)
-The Abstract File System (AFS) provides a single API for interacting with different storage backends (Local, S3) using URNs.
-
-- Local: `fs://local/uploads/resume.pdf`
-- S3: `fs://s3/backups/db.tar.gz`
-
-### 4. Background Tasks (TaskIQ)
-Long-running operations are offloaded to workers using TaskIQ. Context (User, Trace ID) is automatically propagated to the worker.
+**NiceGUI** runs on top of FastAPI to provide a reactive, server-driven UI. Modules can plug visual components directly into the main UI layout via UI slots, allowing seamless visual integration without needing to build separate front-end bundles.
 
 ---
 
-## The Module Lifecycle
-
-Modules are loaded during the application startup phase in `main.py`:
-
-1. **Discovery**: Loader scans `src/modules/*`.
-2. **Initialization**: Models are registered with Beanie; Routers are mounted to FastAPI.
-3. **Hook Execution**: Modules can hook into `startup` and `shutdown` events via `pluggy`.
-
----
-
-## Next Steps
-- Dive deeper into the [Module System](./module_system.md).
-- Understand the [Authentication & Security](./auth_system.md) layer.
-- Learn about [UI & Layout System](./layout_system.md).
+**Full SDK reference**: See [Core API Reference](../reference/core_api.md) for complete specification of hooks and the ModuleLoader.

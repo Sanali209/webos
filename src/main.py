@@ -46,12 +46,19 @@ async def lifespan(app: FastAPI):
     from src.core.services.settings_service import settings_service
     await settings_service.load_all()
     
+    # Register Core Services across Modules
+    loader.register_module_services()
+    
     # Auto-seed Default Admin if no users exist
     from src.core.seeding import setup_default_user
     await setup_default_user()
     
     # Trigger Startup Hooks
     loader.trigger_startup()
+    await loader.trigger_startup_async()
+    
+    # Trigger UI Slot Registries
+    loader.register_all_page_slots()
     
     yield
     
@@ -152,3 +159,8 @@ ui.run_with(app, title=settings.PROJECT_NAME, storage_secret=settings.SECRET_KEY
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "version": settings.VERSION}
+
+@app.get("/debug-apps")
+async def debug_apps():
+    from src.ui.registry import ui_registry
+    return {"apps": [a.route for a in ui_registry.apps]}
