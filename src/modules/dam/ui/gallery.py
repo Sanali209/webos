@@ -53,32 +53,43 @@ def gallery_page():
                         
                         watch_dialog_content = ui.column().classes("w-full p-4 gap-2 bg-slate-50")
                         
-                        def handle_folder_picked(new_path: str):
+                        async def handle_folder_picked(new_path: str):
                             settings = settings_service.get_typed("dam", DAMSettings)
                             if new_path not in settings.watch_paths:
                                 settings.watch_paths.append(new_path)
-                                _save_and_apply(settings)
+                                await _save_and_apply(settings)
                         
                         def picker_trigger():
                             FolderPicker(callback=handle_folder_picked).open()
 
-                        def _save_and_apply(settings: DAMSettings):
-                            import asyncio
-                            async def _do():
-                                try:
-                                    await settings_service.update("dam", settings.model_dump())
-                                    watcher = ServiceRegistry.get(WatcherService)
-                                    await watcher.reload_watches([Path(p) for p in settings.watch_paths])
-                                    ui.notify("Watch folders updated", type="positive")
-                                    watch_dialog.close()
-                                except Exception as e:
-                                    ui.notify(f"Failed to update watcher: {e}", type="negative")
-                            asyncio.create_task(_do())
+                        async def _save_and_apply(settings: DAMSettings):
+                            try:
+                                await settings_service.update("dam", settings.model_dump())
+                                watcher = ServiceRegistry.get(WatcherService)
+                                
+                                physical_paths = []
+                                for p in settings.watch_paths:
+                                    if p.startswith("fs://local/"):
+                                        # strip fs://local/ to get physical path for watchdog
+                                        physical_paths.append(Path(p[11:]))
+                                    elif p.startswith("fs://"):
+                                        # watchdog won't support non-local correctly, but fallback
+                                        ui.notify(f"Watchdog may not support non-local path: {p}", type="warning")
+                                        physical_paths.append(Path(p))
+                                    else:
+                                        physical_paths.append(Path(p))
+                                        
+                                await watcher.reload_watches(physical_paths)
+                                ui.notify("Watch folders updated", type="positive")
+                                watch_dialog.close()
+                                open_watch_dialog()
+                            except Exception as e:
+                                ui.notify(f"Failed to update watcher: {e}", type="negative")
                             
-                        def remove_path(idx: int):
+                        async def remove_path(idx: int):
                             settings = settings_service.get_typed("dam", DAMSettings)
                             settings.watch_paths.pop(idx)
-                            _save_and_apply(settings)
+                            await _save_and_apply(settings)
                             
                         def open_watch_dialog():
                             watch_dialog_content.clear()

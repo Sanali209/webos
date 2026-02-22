@@ -33,6 +33,8 @@ dependencies = [
     "ultralytics>=8.1.0",
     "onnxruntime>=1.17.0",
     "qdrant-client>=1.7.0",
+    "pandas>=2.0.0",
+    "sentence-transformers>=2.5.1",
 ]
 
 [project.optional-dependencies]

@@ -19,6 +19,8 @@ class FolderPicker(ui.dialog):
             # Browser Context
             with ui.column().classes("p-4 gap-2 w-full"):
                 with ui.row().classes("w-full items-center gap-2"):
+                    sources = list(storage_manager._sources.keys()) if hasattr(storage_manager, '_sources') else ["local"]
+                    self.source_select = ui.select(sources, value="local", on_change=self.on_source_change).classes("w-32").props("dense outlined")
                     ui.button(icon="arrow_upward", on_click=self.navigate_up).props("flat dense color=primary").tooltip("Go Up")
                     self.path_label = ui.label(self.current_path).classes("font-mono text-sm text-slate-700 flex-grow pr-2 truncate")
                 
@@ -35,16 +37,21 @@ class FolderPicker(ui.dialog):
 
             ui.timer(0.1, self.refresh, once=True)
 
+    async def on_source_change(self, e):
+        self.current_path = f"fs://{e.value}/"
+        await self.refresh()
+
     def navigate_up(self):
-        # Prevent navigating above fs://local/ (the root prefix in AFS)
-        if self.current_path in ("fs://local/", "fs://local"):
+        # Prevent navigating above root prefix in AFS
+        root_prefix = f"fs://{self.source_select.value}/"
+        if self.current_path in (root_prefix, f"fs://{self.source_select.value}"):
             ui.notify("Already at root directory", type="warning")
             return
             
         # Example: fs://local/Users/name/ -> fs://local/Users/
         parts = self.current_path.rstrip('/').split('/')
         if len(parts) <= 3: # fs: , , local
-            self.current_path = "fs://local/"
+            self.current_path = root_prefix
         else:
             self.current_path = '/'.join(parts[:-1]) + '/'
             
@@ -84,23 +91,26 @@ class FolderPicker(ui.dialog):
             with self.list_container:
                 ui.label(f"Error accessing directory: {e}").classes("p-4 text-red-500 w-full text-center")
 
-    def confirm_selection(self):
+    async def confirm_selection(self):
         # We assume local paths for watcher service right now. Convert URN to local path.
-        if self.current_path.startswith("fs://local/"):
-            local_path = self.current_path[11:]
-            # Ensure it starts with root if on linux, or drive letter on windows
-            # Just passing it as is, Watchdog will need a valid absolute path.
-            # Local AFS source typically expects absolute paths after `fs://local/`.
-            # Let's pass the raw URN or Local Path depending on the caller.
-            # WatcherService usually wants a string path. We'll give it the absolute local path.
-            # For Windows, fs://local/D:/github becomes D:/github
+        # Ensure it starts with root if on linux, or drive letter on windows
+        
+        prefix = f"fs://{self.source_select.value}/"
+        if self.current_path.startswith(prefix):
+            local_path = self.current_path[len(prefix):]
             
             # Simple heuristic
             if local_path.startswith('/'):
                 pass
             
-            # Just pass the URN's payload path. The caller can convert it to Path
-            self.callback(local_path)
+            # Just pass the URN's payload path or full URN depending on usage
+            # For simplicity let's pass the raw URN so DAM knows which source it is!
+            # WatcherService uses Path() right now, but it's configured for URNs.
+            import inspect
+            if inspect.iscoroutinefunction(self.callback):
+                await self.callback(self.current_path)
+            else:
+                self.callback(self.current_path)
             self.close()
         else:
             ui.notify("Only local file system paths are supported for watch folders.", type="negative")

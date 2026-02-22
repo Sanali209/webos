@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
 
     # Database
-    MONGO_URL: str = "mongodb://127.0.0.1:27017"
+    MONGO_URL: str = "mongodb://localhost:27017"
     MONGO_DB_NAME: str = "webos_db"
 
     # Redis

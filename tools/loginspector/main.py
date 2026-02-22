@@ -90,8 +90,12 @@ class LogInspectorApp(tb.Window):
         tb.Entry(self.sidebar_frame, textvariable=self.search_var).pack(fill=X, pady=5)
         self.search_var.trace_add("write", lambda *args: self.refresh_treeview())
 
-        # Reset Logs Action
-        tb.Button(self.sidebar_frame, text="Reset Logs", command=self.reset_logs, bootstyle="danger").pack(fill=X, pady=30)
+        # Buttons Panel
+        action_btns = tb.Frame(self.sidebar_frame)
+        action_btns.pack(fill=X, pady=30)
+        
+        tb.Button(action_btns, text="Refresh", command=self.force_refresh, bootstyle="success").pack(side=LEFT, expand=True, fill=X, padx=2)
+        tb.Button(action_btns, text="Reset Logs", command=self.reset_logs, bootstyle="danger").pack(side=LEFT, expand=True, fill=X, padx=2)
         
         # Main Content (Treeview over Text Details)
         self.main_frame = tb.Frame(self.paned)
@@ -164,6 +168,14 @@ class LogInspectorApp(tb.Window):
             if f not in self.file_positions:
                 # To read from beginning on first open, set to 0
                 self.file_positions[f] = 0
+
+    def force_refresh(self):
+        # Reset positions to 0 to force a full re-read
+        for f in self.file_positions:
+            self.file_positions[f] = 0
+            
+        self.log_entries.clear()
+        self.refresh_treeview()
 
     def reset_logs(self):
         if messagebox.askyesno("Reset Logs", "Are you sure you want to completely clear the physical target log files and clear the view?"):
