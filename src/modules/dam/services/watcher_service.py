@@ -90,6 +90,19 @@ class WatcherService:
             self._observer.stop()
             await asyncio.to_thread(self._observer.join)
 
+    async def reload_watches(self, paths: list[Path]):
+        """Safely reloads watch paths by stopping the current observer thread and creating a new one."""
+        await self.stop()
+        
+        # Reset completely
+        self._observer = Observer()
+        self.watched_paths.clear()
+        
+        for p in paths:
+            self.add_watch(p)
+            
+        await self.start()
+
     async def _fsync_worker(self):
         """Consumes events from queue with debouncing."""
         loop = asyncio.get_running_loop()

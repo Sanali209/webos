@@ -27,13 +27,16 @@ def run_subprocess():
     ]
 
     processes = []
+    log_file = open("run_py.log", "a", encoding="utf-8")
+    
     try:
-        processes.append(subprocess.Popen(uvicorn_cmd, env=env))
-        processes.append(subprocess.Popen(worker_cmd, env=env))
+        processes.append(subprocess.Popen(uvicorn_cmd, env=env, stdout=log_file, stderr=subprocess.STDOUT))
+        processes.append(subprocess.Popen(worker_cmd, env=env, stdout=log_file, stderr=subprocess.STDOUT))
 
         print("\n✅ WebOS started successfully!")
         print("🔗 UI: http://localhost:8000")
         print("🛠️  API: http://localhost:8000/docs")
+        print("📁 Logging output to: run_py.log")
         print("Press Ctrl+C to stop both processes.\n")
 
         while True:

@@ -4,14 +4,19 @@ from src.core.registry import ServiceRegistry
 from src.modules.dam.services.unified_search import UnifiedSearchService
 from src.modules.dam.schemas.search import SearchRequest, AssetFilter
 from src.modules.dam.models import Asset
+from src.core.services.settings_service import settings_service
+from src.modules.dam.settings import DAMSettings
+from src.modules.dam.services.watcher_service import WatcherService
+from src.ui.components.folder_picker import FolderPicker
+from pathlib import Path
 
 @ui.page('/dam')
 def gallery_page():
     with MainLayout():
-        with ui.row().classes("w-full h-full min-h-[calc(100vh-120px)] flex-nowrap gap-6"):
+        with ui.row().classes("w-full h-full min-h-[calc(100vh-80px)] flex-nowrap gap-4"):
             
             # Sidebar for Facets
-            with ui.column().classes("w-64 shrink-0 bg-slate-50 border border-slate-200 rounded-2xl p-4 gap-4 hidden md:flex h-max"):
+            with ui.column().classes("w-60 shrink-0 bg-slate-50 border border-slate-200 rounded-xl p-3 gap-3 hidden md:flex h-max"):
                 ui.label("FILTERS").classes("text-[10px] font-black text-slate-400 uppercase tracking-widest")
                 
                 type_filter = ui.select(
@@ -34,12 +39,67 @@ def gallery_page():
             
             # Main Gallery Area
             with ui.column().classes("flex-grow min-w-0 h-full"):
-                with ui.row().classes("w-full items-center gap-4 mb-4 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm"):
+                with ui.row().classes("w-full items-center gap-3 mb-3 bg-white p-2 rounded-xl border border-slate-200 shadow-sm"):
                     ui.icon("search").classes("text-slate-400 text-xl ml-2")
                     search_input = ui.input(placeholder="Search by keywords, tags, or concepts...").props("borderless standout=bg-transparent").classes("flex-grow text-lg")
                     search_btn = ui.button("Search", on_click=lambda: load_assets()).props("color=primary rounded").classes("font-bold px-6")
+                    
+                    # Watch Folders Dialog Builder
+                    with ui.dialog() as watch_dialog, ui.card().classes("w-full max-w-lg p-0"):
+                        with ui.row().classes("w-full bg-primary text-white p-4 items-center"):
+                            ui.icon("folder_special", size="sm")
+                            ui.label("Manage Watch Folders").classes("text-lg font-bold flex-grow")
+                            ui.button(icon="close", on_click=watch_dialog.close).props("flat color=white")
+                        
+                        watch_dialog_content = ui.column().classes("w-full p-4 gap-2 bg-slate-50")
+                        
+                        def handle_folder_picked(new_path: str):
+                            settings = settings_service.get_typed("dam", DAMSettings)
+                            if new_path not in settings.watch_paths:
+                                settings.watch_paths.append(new_path)
+                                _save_and_apply(settings)
+                        
+                        def picker_trigger():
+                            FolderPicker(callback=handle_folder_picked).open()
+
+                        def _save_and_apply(settings: DAMSettings):
+                            import asyncio
+                            async def _do():
+                                try:
+                                    await settings_service.update("dam", settings.model_dump())
+                                    watcher = ServiceRegistry.get(WatcherService)
+                                    await watcher.reload_watches([Path(p) for p in settings.watch_paths])
+                                    ui.notify("Watch folders updated", type="positive")
+                                    watch_dialog.close()
+                                except Exception as e:
+                                    ui.notify(f"Failed to update watcher: {e}", type="negative")
+                            asyncio.create_task(_do())
+                            
+                        def remove_path(idx: int):
+                            settings = settings_service.get_typed("dam", DAMSettings)
+                            settings.watch_paths.pop(idx)
+                            _save_and_apply(settings)
+                            
+                        def open_watch_dialog():
+                            watch_dialog_content.clear()
+                            settings = settings_service.get_typed("dam", DAMSettings)
+                            with watch_dialog_content:
+                                if not settings.watch_paths:
+                                    ui.label("No watch folders configured.").classes("italic text-slate-500 w-full text-center p-4")
+                                else:
+                                    for idx, p in enumerate(settings.watch_paths):
+                                        with ui.row().classes("w-full items-center justify-between border-b border-slate-200 pb-2"):
+                                            ui.icon("folder").classes("text-slate-400")
+                                            ui.label(p).classes("font-mono text-sm flex-grow word-break-all ml-2 text-slate-700")
+                                            ui.button(icon="delete", on_click=lambda i=idx: remove_path(i)).props("flat color=red dense")
+                                
+                                ui.button("Add Folder", icon="add", on_click=picker_trigger).props("outline color=primary w-full").classes("mt-4")
+                            watch_dialog.open()
+
+                    # Settings Button
+                    ui.button(icon="settings", on_click=open_watch_dialog).props("outline color=slate rounded").classes("ml-1").tooltip("Watch Folders")
                 
-                grid_container = ui.grid(columns=4).classes("w-full gap-4 pb-20")
+                grid_container = ui.grid(columns=5).classes("w-full gap-3 pb-20")
                 
                 async def load_assets():
                     grid_container.clear()

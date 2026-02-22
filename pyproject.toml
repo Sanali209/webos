@@ -21,6 +21,7 @@ dependencies = [
     "diskcache>=5.6.0",
     "slowapi>=0.1.8",
     "boto3>=1.28.0",
+    "aioboto3>=13.0.0",
     "python-slugify>=8.0.0",
     "Pillow>=10.2.0",
     "mutagen>=1.47.0",
@@ -31,6 +32,7 @@ dependencies = [
     "watchdog>=4.0.0",
     "ultralytics>=8.1.0",
     "onnxruntime>=1.17.0",
+    "qdrant-client>=1.7.0",
 ]
 
 [project.optional-dependencies]
