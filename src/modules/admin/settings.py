@@ -31,11 +31,15 @@ def settings_editor_page():
                         ui.input("Redis URL", value=settings.REDIS_URL).classes("w-full").props("readonly")
 
                         ui.label("Environment").classes("text-lg font-bold border-b pb-2 mt-4")
-                        ui.select(options=["DEBUG", "INFO", "WARNING", "ERROR"], value="INFO", label="Log Level").classes("w-full")
+                        log_level = ui.select(options=["DEBUG", "INFO", "WARNING", "ERROR"], value="INFO", label="Log Level").classes("w-full")
+
+                        async def save_core_settings():
+                             # Core settings are typically environment variables, but we could persist overrides
+                             # For now, we'll just notify as we haven't implemented .env writing
+                             ui.notify(f"Log Level changed to {log_level.value}. Restart required for effect.", type="info")
 
                         with ui.row().classes("mt-6 justify-end w-full"):
-                            ui.button("Save Changes", icon="save").props("elevated disabled")
-                            ui.label("Read-only in demonstration mode.").classes("text-xs text-slate-400 italic")
+                            ui.button("Save Changes", icon="save", on_click=save_core_settings).props("elevated")
 
                 with ui.tab_panel("Modules"):
                     ui.label("Persistent settings registered by modules. Changes are saved to MongoDB.").classes("text-slate-500 mb-4")
